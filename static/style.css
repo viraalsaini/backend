@@ -1,0 +1,87 @@
+body {
+    background-color: #260236;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+#splitTextBox {
+    display: flex;
+    width: 100%;
+    height: 160px;
+    background-color: transparent;
+    border: 2px solid white; /* Full white border around the big box */
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+#inputText,
+#translatedText {
+    width: 50%;
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1.1rem;
+    resize: none;
+    outline: none;
+    height: 100%;
+}
+
+#inputText {
+    border-right: 2px solid white; /* Middle divider line */
+}
+
+label {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+select {
+    width: 20%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+h2, h3 {
+    font-size: 1.8rem;
+    margin-top: 20px;
+}
+
+#sentiment, #ner, #pos {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    width: 90%;
+    margin-left: 5%;
+}
