@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 # ✅ Correct Google Drive zip file link for gdown (with id)
 zip_file_link = 'https://drive.google.com/uc?id=1Wnu5n8t6hkrlpYHXrjRQzTSGzMl3mBsn'
-model_dir = './NLPProjectModels'
+model_dir = 'NLPProjectModels'
 zip_path = 'NLPProjectModels.zip'
 
 # ✅ Download and unzip models (only if not already unzipped)
