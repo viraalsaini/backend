@@ -14,24 +14,26 @@ import os
 
 app = Flask(__name__)
 
-# Google Drive link for the models .zip file
-zip_file_link = 'https://drive.google.com/file/d/1Wnu5n8t6hkrlpYHXrjRQzTSGzMl3mBsn/view?usp=sharing'
-
-# Path to save the models
+# ✅ Correct Google Drive zip file link for gdown (with id)
+zip_file_link = 'https://drive.google.com/uc?id=1Wnu5n8t6hkrlpYHXrjRQzTSGzMl3mBsn'
 model_dir = './NLPProjectModels'
+zip_path = 'NLPProjectModels.zip'
 
-# Function to download and unzip models on Replit
+# ✅ Download and unzip models (only if not already unzipped)
 def download_and_unzip_model():
     if not os.path.exists(model_dir):
         print("Downloading .zip file...")
-        gdown.download(zip_file_link, 'models.zip', quiet=False)
+        gdown.download(zip_file_link, zip_path, quiet=False)
 
         print("Unzipping the .zip file...")
-        with zipfile.ZipFile('models.zip', 'r') as zip_ref:
-            zip_ref.extractall(model_dir)
-        print("Models unzipped successfully.")
+        try:
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(model_dir)
+            print("Models unzipped successfully.")
+        except zipfile.BadZipFile:
+            print("❌ Error: File is not a valid zip file.")
+        os.remove(zip_path)
 
-# Download and unzip models when the app starts
 download_and_unzip_model()
 
 # Paths to model folders
@@ -106,7 +108,7 @@ def analyze():
         "pos": pos_tags
     })
 
+# ✅ DO NOT USE app.run() on Railway – use this instead:
 if __name__ == "__main__":
     from os import getenv
     app.run(host="0.0.0.0", port=int(getenv("PORT", 5000)))
-
