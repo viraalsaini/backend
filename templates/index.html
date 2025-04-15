@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Translation & Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #260236;
+            color: white;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .lang-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #swapBtn {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 20px;
+        }
+
+        .labels {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        .input-area {
+            display: flex;
+            justify-content: space-between;
+            background-color: transparent;
+            border: 2px solid white;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .textarea-box {
+            width: 50%;
+            height: 200px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            resize: none;
+        }
+
+        .textarea-box::placeholder {
+            color: #ccc;
+        }
+
+        #copyBtn {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            background-color: #6c3ccf;
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        .results {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .collapsible {
+            background-color: #6c3ccf;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 10px;
+            display: none;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>English ↔ Italian NLP Tool</h1>
+
+        <div class="lang-controls">
+            <label for="langSelect">Translate to:</label>
+            <select id="langSelect">
+                <option value="it">Italian</option>
+                <option value="en">English</option>
+            </select>
+            <button id="swapBtn">↔</button>
+        </div>
+
+        <div class="labels">
+            <span>Enter Text</span>
+            <span>Translated Text</span>
+        </div>
+
+        <div class="input-area">
+            <textarea id="inputText" class="textarea-box" placeholder="Type here..."></textarea>
+            <textarea id="translatedText" class="textarea-box" placeholder="Translation appears here" readonly></textarea>
+            <button id="copyBtn">📋</button>
+        </div>
+
+        <div class="controls">
+            <button id="analyzeBtn">Analyze</button>
+        </div>
+
+        <div class="results">
+            <button class="collapsible">Sentiment</button>
+            <div class="content"><p id="sentiment"></p></div>
+
+            <button class="collapsible">POS Tags</button>
+            <div class="content"><p id="pos"></p></div>
+
+            <button class="collapsible">Named Entity Recognition (NER)</button>
+            <div class="content"><p id="ner"></p></div>
+        </div>
+    </div>
+
+    <script>
+        const inputText = document.getElementById('inputText');
+        const translatedText = document.getElementById('translatedText');
+        const langSelect = document.getElementById('langSelect');
+        const swapBtn = document.getElementById('swapBtn');
+        const copyBtn = document.getElementById('copyBtn');
+
+        document.getElementById('analyzeBtn').addEventListener('click', async () => {
+            const text = inputText.value;
+            const target_lang = langSelect.value;
+
+            if (!text.trim()) {
+                alert("Please enter some text.");
+                return;
+            }
+
+            const response = await fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text, target_lang })
+            });
+
+            const result = await response.json();
+
+            if (result.error) {
+                alert("Something went wrong: " + result.error);
+                return;
+            }
+
+            translatedText.value = result.translated_text;
+            document.getElementById('sentiment').textContent = `Class: ${result.sentiment_class}, Confidence: ${result.confidence}`;
+            document.getElementById('pos').textContent = result.pos.join(', ');
+            document.getElementById('ner').textContent = result.ner.join(', ');
+        });
+
+        // Swap languages
+        swapBtn.addEventListener('click', () => {
+            const current = langSelect.value;
+            langSelect.value = current === 'en' ? 'it' : 'en';
+
+            // Optional: swap text fields too
+            const temp = inputText.value;
+            inputText.value = translatedText.value;
+            translatedText.value = temp;
+        });
+
+        // Clipboard copy
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(translatedText.value)
+                .then(() => alert("Copied to clipboard!"))
+                .catch(() => alert("Failed to copy."));
+        });
+
+        // Collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                content.style.display = content.style.display === "block" ? "none" : "block";
+            });
+        }
+    </script>
+</body>
+</html>
