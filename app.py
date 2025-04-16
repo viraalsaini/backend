@@ -15,7 +15,7 @@ import zipfile
 app = Flask(__name__)
 
 # --- Constants for Google Drive Download ---
-MODEL_ZIP_ID = "1Wnu5n8t6hkrlpYHXrjRQzTSGzMl3mBsn"  # <- REPLACE THIS
+MODEL_ZIP_ID = "1Wnu5n8t6hkrlpYHXrjRQzTSGzMl3mBsn"  # <- Keep your actual ID here
 ZIP_PATH = "NLPProjectModels.zip"
 EXTRACT_DIR = "NLPProjectModels"
 
@@ -27,7 +27,7 @@ def download_and_extract_models():
 
         print("Extracting models...")
         with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
-            zip_ref.extractall(EXTRACT_DIR)
+            zip_ref.extractall(".")
 
         print("Cleaning up...")
         os.remove(ZIP_PATH)
@@ -39,10 +39,10 @@ download_and_extract_models()
 # --- Load Models & Tokenizers ---
 sentiment_model_path = os.path.join(EXTRACT_DIR, "sentiment_model")
 sentiment_tokenizer_path = os.path.join(EXTRACT_DIR, "sentiment_tokenizer")
-translate_it_to_eng_model_path = os.path.join(EXTRACT_DIR, "translation_ita_to_eng_model")
-translate_it_to_eng_tokenizer_path = os.path.join(EXTRACT_DIR, "translation_ita_to_eng_tokenizer")
-translate_eng_to_it_model_path = os.path.join(EXTRACT_DIR, "translation_model_en_to_it")
-translate_eng_to_it_tokenizer_path = os.path.join(EXTRACT_DIR, "translation_tokenizer_en_to_it")
+translate_it_to_eng_model_path = os.path.join(EXTRACT_DIR, "translate_ita_to_eng_model")
+translate_it_to_eng_tokenizer_path = os.path.join(EXTRACT_DIR, "translate_ita_to_eng_tokenizer")
+translate_eng_to_it_model_path = os.path.join(EXTRACT_DIR, "translate_eng_to_it_model")
+translate_eng_to_it_tokenizer_path = os.path.join(EXTRACT_DIR, "translate_eng_to_it_tokenizer")
 
 # Load models and tokenizers
 sentiment_model = AutoModelForSequenceClassification.from_pretrained(sentiment_model_path)
